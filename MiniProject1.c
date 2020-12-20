@@ -5,7 +5,7 @@
 int variables;
 int clauses;
 struct SATProblem  {
-    int value[100][100];
+    int value[1000][1000];
     int variables;
     int clauses;
 };
@@ -68,10 +68,27 @@ struct SATProblem readSATProblem(char * path){
     }
 
     for (int i = 0; i < matrix.clauses; ++i) {
+        printf("(");
         for (int j = 0; j < matrix.variables; ++j) {
-            printf("%d ", matrix.value[i][j]);
+            if(matrix.value[i][j] == 0 ) continue;
+            else if (matrix.value[i][j]==1)
+            {
+                printf("x%d", j+1);
+            } else if (matrix.value[i][j]==-1)
+            {
+                printf("¬x%d", j+1);
+            }
+            if(j<matrix.variables-1) {
+                printf(" ∨ ");
+            }
         }
-        printf("\n");
+        if(i<matrix.clauses-1){
+            printf(") ∧ ");
+        }else
+        {
+            printf(").\n");
+        }
+        
     }
     fclose(file);
     return matrix;
@@ -136,14 +153,25 @@ int verifySAT(struct SATProblem problem, struct Affectation affec) {
     return 1;
 }
 
-int main() {
+int main(int argc, char const *argv[])
+{
+    /* code */
+    if(argc != 3) {
+        printf("error: for using type: \n./mini1 dimacs.txt affectation.txt\n");
+        return 0;
+    }
+
+    char * problemPath = argv[1];
+    char * affectationPath = argv[2];
+
     struct SATProblem problem =
-            readSATProblem("./test/mini1/test1.txt");
+            readSATProblem(problemPath);
     int varialbes = problem.variables;
     struct Affectation affec =
-            readAffectation("./test/mini1/affect.txt", varialbes);
+            readAffectation(affectationPath, varialbes);
 
     printf("verify: %d", verifySAT(problem, affec));
     printf("\n");
     return 0;
 }
+
