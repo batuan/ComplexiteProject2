@@ -1,6 +1,6 @@
-mini1: đọc chuẩn cnf của bài toán minisat
+mini1: CNF reading
 
-mini2: chuyển đổi bài toán independence set về bài toán SAT
-
-mini3: chuyển đổi bài toán sudoku về bài toán SAT
+mini2: Independence Set to SAT
 ref: 
+mini3: Sudoku to sat
+ref: https://people.mpi-sws.org/~joel/publications/sudoku05.pdf
