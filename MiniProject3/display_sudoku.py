@@ -1,15 +1,15 @@
 import sys
 
-square = 0;
-line = [];
-size = int(sys.argv[2]);
-square = size*size;
+square = 0
+line = []
+size = int(sys.argv[2])
+square = size*size
 
 def p(x, y, z):
     return (((x - 1) * square) + (y - 1)) * square + z
 
 with open(sys.argv[1], 'r') as file:
-    line = file.read();
+    line = file.read()
     if "SAT" in line:
         print("S O L U T I O N\n- - - - - - - - -")
     solution = line.split()

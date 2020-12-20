@@ -1,0 +1,110 @@
+c Graph Generator
+c
+c By: Mark Brockington (brock@cs.ualberta.ca)
+c and Joe Culberson (joe@cs.ualberta.ca)
+c
+c Graph Size:20, Clique Size: 5
+c Seed:0, Edge Density:  0.50000
+c Depth 0 Hiding
+c
+c Clique Elements are:
+c 8 6 5 17 15 
+c
+c Estimated Size of Uncompressed File:   0.0MB
+c
+p edge 20 95
+e 2 1
+e 3 1
+e 3 2
+e 4 2
+e 4 3
+e 5 1
+e 6 1
+e 6 2
+e 6 3
+e 6 5
+e 7 3
+e 7 5
+e 7 6
+e 8 1
+e 8 2
+e 8 4
+e 8 5
+e 8 6
+e 9 1
+e 9 3
+e 9 4
+e 9 6
+e 9 7
+e 10 1
+e 10 3
+e 10 4
+e 10 5
+e 10 6
+e 10 8
+e 10 9
+e 11 1
+e 11 3
+e 11 9
+e 12 6
+e 12 7
+e 12 8
+e 12 11
+e 13 2
+e 13 3
+e 13 4
+e 13 5
+e 13 6
+e 13 9
+e 13 11
+e 13 12
+e 14 2
+e 14 4
+e 14 6
+e 14 8
+e 14 9
+e 14 13
+e 15 2
+e 15 4
+e 15 5
+e 15 7
+e 15 8
+e 15 9
+e 15 10
+e 15 11
+e 15 13
+e 16 2
+e 16 6
+e 16 7
+e 16 8
+e 16 9
+e 16 10
+e 16 12
+e 17 2
+e 17 5
+e 17 7
+e 17 8
+e 17 9
+e 17 13
+e 18 1
+e 18 4
+e 18 5
+e 18 6
+e 18 7
+e 18 9
+e 18 11
+e 18 14
+e 18 16
+e 18 17
+e 19 5
+e 19 9
+e 19 13
+e 19 16
+e 20 6
+e 20 7
+e 20 8
+e 20 9
+e 20 11
+e 20 12
+e 20 15
+e 20 17

@@ -69,25 +69,24 @@ void graph2CNFAHunt(int k, char* path) {
     char mm[255];
     char *preamble = NULL;
     int count = 0;
+    preamble = (char *)calloc(10000, sizeof(char));
     // CONSTRAINT 1: ∀{i |1 ≤ i ≤ k}∃xiv
     /**
      * # CONSTRAINT 1)
-		# We want to say, for every i, there is an ith vertex in the clique
+		# We want to say, for every i, there is an ith vertex in the Zone Vide
 		# equivalent to: v0 is 1st or v1 is 1st or... vn is 1st
 		# AND
 		# v0 is 2nd or v1 is 2nd or v2 is 2nd.... etc
 		# -> encode
-		#  (x_1,0) or (x_1,1) or (x_1,2).... (x_1, n) where n = last vertex
+		# (x_1,0) or (x_1,1) or (x_1,2).... (x_1, n) where n = last vertex
 		# AND
 		# (x_2,0) or (x_2,1) or (x_2,2).... (x_2, n) where n = last vertex
 		# AND
 		# ...
 		# (x_k,0) or (x_k,1) or (x_k,2).... (x_k, n) where n = last vertex
-
 		# can create literals and encode constraint 1 using the same loop
 		# since they require the same algorithm structure
      */
-    preamble = (char *)calloc(10000, sizeof(char));
     for(int i = 0; i < k; i++) {
         for(int j = 0; j<graph.n; j++) {
             sprintf(mm, "%d ", i*graph.n + j + 1);
@@ -99,10 +98,10 @@ void graph2CNFAHunt(int k, char* path) {
 
     /**
      * Encode Constraint 2
-     * For every non-edge (v, w) ∈ E, v AND w cannot BOTH be in the clique (since there
+     * For every edge (v, w) ∈ E, v AND w cannot BOTH be in the independence set (since there
      * must exist an edge between any pair of vertices in (v, w) ∈ C). We can write this more
      * formally as
-     * ∀{i, j | i != j} ∀{v, w ∈ V |(v, w) ∈/ E ∧ v != w} ¬xiv ∨ ¬xjw
+     * ∀{i, j | i != j} ∀{v, w ∈ V |(v, w) ∈ E ∧ v != w} ¬xiv ∨ ¬xjw
      */
 
     for (int i = 0; i < k; i++) {
@@ -110,7 +109,7 @@ void graph2CNFAHunt(int k, char* path) {
             for (int v = 0; v < graph.n; v++) {
                 for (int w = 0; w < graph.n; w++) {
                     if(i!=j&&v!=w) {
-                        if(graph.A[v][w]==0) {
+                        if(graph.A[v][w]==1) {
                             sprintf(mm, "%d %d 0\n", -(i*graph.n + v + 1), -(j*graph.n + w + 1));
                             strcat(preamble,mm);
                             count ++;
@@ -123,11 +122,11 @@ void graph2CNFAHunt(int k, char* path) {
 
     /**
      * Encode Constraint 3
-     * For every i, j (where j 6= i), the i th vertex is different from the j th vertex.
-     * That is, we know that a vertex v cannot be both the i th and the j th vertex in the clique.
-     * It also means that two different vertices cannot both be the i th vertex in the clique.
+     * For every i, j (where j != i), the i th vertex is different from the j th vertex.
+     * That is, we know that a vertex v cannot be both the i th and the j th vertex in the Zone Vide.
+     * It also means that two different vertices cannot both be the i th vertex in the Zone Vide.
      * We can write this as a two-part constraint for simplicity:
-     * ∀[i, j | i != j] ∀[v ∈ V ] ¬xiv ∨ ¬xjv
+     * ∀[i, j | i != j] ∀ [v ∈ V ] ¬xiv ∨ ¬xjv
      * ∀i ∀[v, w ∈ V | v != w] ¬xiv ∨ ¬xiw
      */
 

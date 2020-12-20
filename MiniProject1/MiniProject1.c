@@ -1,19 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "MiniProject1.h"
 
 int variables;
 int clauses;
-struct SATProblem  {
-    int value[1000][1000];
-    int variables;
-    int clauses;
-};
-
-struct Affectation {
-    int * affec;
-};
-
 /**
  *
  * @param path
@@ -39,12 +27,15 @@ struct SATProblem readSATProblem(char * path){
     }
     matrix.variables = variables;
     matrix.clauses = clauses;
+    matrix.value = malloc(clauses*variables*sizeof(int));
     printf("clause: %d variable: %d\n", clauses, variables);
+
+    // value[i][j] is access by value[i*variables + j]
     for(int i=0;i<clauses;i++)
     {
         for(int j=0;j<variables;j++)
         {
-            matrix.value[i][j] = 0;
+            matrix.value[i*variables + j] = 0;
         }
     }
 
@@ -60,36 +51,36 @@ struct SATProblem readSATProblem(char * path){
             }
         } else {
             if(literal < 0) {
-                matrix.value[row][0-literal-1] = -1;
+                matrix.value[row*variables + (0-literal-1)] = -1;
             } else {
-                matrix.value[row][literal-1] = 1;
+                matrix.value[row*variables + (literal-1)] = 1;
             }
         }
     }
 
-    for (int i = 0; i < matrix.clauses; ++i) {
-        printf("(");
-        for (int j = 0; j < matrix.variables; ++j) {
-            if(matrix.value[i][j] == 0 ) continue;
-            else if (matrix.value[i][j]==1)
-            {
-                printf("x%d", j+1);
-            } else if (matrix.value[i][j]==-1)
-            {
-                printf("¬x%d", j+1);
-            }
-            if(j<matrix.variables-1) {
-                printf(" ∨ ");
-            }
-        }
-        if(i<matrix.clauses-1){
-            printf(") ∧ ");
-        }else
-        {
-            printf(").\n");
-        }
+    // for (int i = 0; i < matrix.clauses; ++i) {
+    //     printf("(");
+    //     for (int j = 0; j < matrix.variables; ++j) {
+    //         if(matrix.value[i * variables + j] == 0 ) continue;
+    //         else if (matrix.value[i * variables + j]==1)
+    //         {
+    //             printf("x%d", j+1);
+    //         } else if (matrix.value[i * variables + j]==-1)
+    //         {
+    //             printf("¬x%d", j+1);
+    //         }
+    //         if(j<matrix.variables-1) {
+    //             printf(" ∨ ");
+    //         }
+    //     }
+    //     if(i<matrix.clauses-1){
+    //         printf(") ∧ ");
+    //     }else
+    //     {
+    //         printf(").\n");
+    //     }
         
-    }
+    // }
     fclose(file);
     return matrix;
 }
@@ -132,16 +123,17 @@ struct Affectation readAffectation (char * path, int variables) {
  */
 int verifySAT(struct SATProblem problem, struct Affectation affec) {
     int clauseIndex = 0;
+    int variables = problem.variables;
     for(clauseIndex = 0; clauseIndex < problem.clauses; clauseIndex++) {
         int check = 0;
         for(int i = 0; i < problem.variables; i ++) {
-            if(problem.value[clauseIndex][i]==0) continue;
-            if(problem.value[clauseIndex][i]==1) {
+            if(problem.value[clauseIndex*variables + i]==0) continue;
+            if(problem.value[clauseIndex*variables + i]==1) {
                 if(affec.affec[i] == 1) {
                     check = 1;
                     break;
                 }
-            } else if (problem.value[clauseIndex][i] == -1) {
+            } else if (problem.value[clauseIndex*variables+ i] == -1) {
                 if(affec.affec[i] == 0) {
                     check = 1;
                     break;
@@ -152,26 +144,8 @@ int verifySAT(struct SATProblem problem, struct Affectation affec) {
     }
     return 1;
 }
-
-int main(int argc, char const *argv[])
-{
-    /* code */
-    if(argc != 3) {
-        printf("error: for using type: \n./mini1 dimacs.txt affectation.txt\n");
-        return 0;
-    }
-
-    char * problemPath = argv[1];
-    char * affectationPath = argv[2];
-
-    struct SATProblem problem =
-            readSATProblem(problemPath);
-    int varialbes = problem.variables;
-    struct Affectation affec =
-            readAffectation(affectationPath, varialbes);
-
-    printf("verify: %d", verifySAT(problem, affec));
-    printf("\n");
-    return 0;
-}
+//  int verifySAT(struct Affectation problem, int b) {
+//      printf("int verify %d %d \n", problem.affec[0], b);
+//      return 1;
+//  }
 
