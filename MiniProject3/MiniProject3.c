@@ -14,11 +14,11 @@ int encode(int row, int col, int digit) {
 }
 
 void preAssign(char * filename, int size) {
-    char path[100] = "./test/sudoku/";
-    strcat(path, filename);
-    FILE *file = fopen(path, "r");
+    //char path[100] = "../TestData/sudoku/";
+    //strcat(path, filename);
+    FILE *file = fopen(filename, "r");
     if (file == NULL) {
-        fprintf(stderr,"Error in creating %s: aborting.\n", path);
+        fprintf(stderr,"Error in creating %s: aborting.\n", filename);
         exit(-1);
     }
 
@@ -55,19 +55,36 @@ int main(int argc, char const *argv[])
     int size = atoi(argv[2]);
     square = size * size;
     preamble = (char *)calloc(10000, sizeof(char));
-
     //pre-assign
     preAssign(filename, square);
+    //write to file
+    char path[100] = "../TestData/sudoku2sat/";
+    char *ptr = strtok(filename, "./");
+    ptr = strtok(NULL, "./");
+    ptr = strtok(NULL, "./");
+    strcat(path, ptr);
+    char path1[100];
+    strcpy(path1, path);
+    strcat(path1, "clone.txt");
+    strcat(path, "_2CNF.txt");
+    FILE *file = fopen(path1, "w");
+    if (file == NULL) {
+        fprintf(stderr,"Error in creating %s: aborting.\n", "fileName");
+        exit(-1);
+    }
+
+    fprintf(file, "%s", preamble);
 
     // 1; There is at least one number in each entry
 
     for(int x = 1; x <= square; x++) {
         for(int y = 1; y <= square; y++) {
             for(int z = 1; z <= square; z++) {
-                sprintf(mm, "%d ", encode(x, y, z));
-                strcat(preamble, mm);
+                fprintf(file, "%d ", encode(x, y, z));
+                //strcat(preamble, mm);
             }
-            strcat(preamble, "0\n");
+            //strcat(preamble, "0\n");
+            fprintf(file, "0\n");
             count ++;
         }
     }
@@ -78,8 +95,8 @@ int main(int argc, char const *argv[])
         for(int z = 1; z <= square; z++) {
             for(int x = 1; x <= square-1; x++) {
                 for(int i = x+1; i<=square; i++) {
-                    sprintf(mm, "%d %d 0\n", -encode(x, y, z), -encode(i, y, z));
-                    strcat(preamble, mm);
+                    fprintf(file, "%d %d 0\n", -encode(x, y, z), -encode(i, y, z));
+                    //strcat(preamble, mm);
                     count ++;
                 }
             }
@@ -91,8 +108,8 @@ int main(int argc, char const *argv[])
         for (int z = 1; z <= square; z++) {
             for (int y = 1; y <= square-1; y++) {
                 for (int i = y+1; i <= square; i++) {
-                    sprintf(mm, "%d %d 0\n", -encode(x, y, z), -encode(x, i, z));
-                    strcat(preamble, mm);
+                    fprintf(file, "%d %d 0\n", -encode(x, y, z), -encode(x, i, z));
+                    //strcat(preamble, mm);
                     count ++;
                 }
             }
@@ -107,8 +124,8 @@ int main(int argc, char const *argv[])
                 for (int x = 1; x <= size ; x++) {
                     for (int y = 1; y <= size; y++) {
                         for (int k = y+1; k <= size; k++) {
-                            sprintf(mm, "%d %d 0\n", -encode(size*i+x, size*j+y, z), -encode(size*i+x,size*j+k, z));
-                            strcat(preamble, mm);
+                            fprintf(file, "%d %d 0\n", -encode(size*i+x, size*j+y, z), -encode(size*i+x,size*j+k, z));
+                            //strcat(preamble, mm);
                             count ++;
                         }
                     }
@@ -124,8 +141,8 @@ int main(int argc, char const *argv[])
                     for (int y = 1; y <= size; y++) {
                         for (int k = x+1; k <= size; k++) {
                             for (int l = 1; l <= size; l++) {
-                                sprintf(mm, "%d %d 0\n", -encode(size*i+x, size*j+y, z), -encode(size*i+k,size*j+l, z));
-                                strcat(preamble, mm);
+                                fprintf(file, "%d %d 0\n", -encode(size*i+x, size*j+y, z), -encode(size*i+k,size*j+l, z));
+                                //strcat(preamble, mm);
                                 count ++;
                             }
                         }
@@ -134,25 +151,20 @@ int main(int argc, char const *argv[])
             }
         }
     }
-
-    //write to file
-    char path[100] = "./test/sudoku2sat/";
-    char *ptr = strtok(filename, ".");
-    strcat(path, ptr);
-    strcat(path, "_2CNF.txt");
-    FILE *file = fopen(path, "w");
-    if (file == NULL) {
-        fprintf(stderr,"Error in creating %s: aborting.\n", "fileName");
-        exit(-1);
-    }
+    fclose(file);
     //head
     char head[255];
     sprintf(head, "p cnf %d %d\n", square*square*square, count);
-    //write
-    fprintf(file,"%s", head);
-    fprintf(file, "%s", preamble);
+    file = fopen(path1, "r");
+    FILE *fileSave = fopen(path, "w");
+    fprintf(fileSave,"%s", head);
+    char c;
+    while ((c = getc(file)) != EOF) {
+        putc(c, fileSave);
+    }
     fclose(file);
-
-    //preAssign(data);
+    fclose(fileSave);
+    remove(path1);
+    printf("count = %d", count);
     return 0;
 }
